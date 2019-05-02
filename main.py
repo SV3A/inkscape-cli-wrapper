@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-
-# TODO:
-# 1. Find out how to execute command
-
 import os
 import re
 import sys
 import argparse
-from pathlib import Path
+import subprocess
 
 # Check if given path exists
 def path_check(path):
@@ -26,11 +22,8 @@ def build_path(path_input):
     else:
         local_path = path_strip.group(0)
 
-    # Build absolute path and check if it exists
-    abs_path = os.getcwd() + '/' + local_path
-    path_check(abs_path)
-
-    return abs_path
+    # Build absolute path
+    return os.getcwd() + '/' + local_path
 
 parser = argparse.ArgumentParser()
 
@@ -43,12 +36,8 @@ parser.add_argument("--export-latex", action="store_true")
 
 args = parser.parse_args()
 
-# Store home path
-home = str(Path.home())
-
 # String to be parsed as inkscape command
-output_cmd = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape-bin'
-
+output_cmd = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 
 # Check for flags
 if args.z:
@@ -60,6 +49,7 @@ if args.D:
 # Handle file input
 if args.file:
     abs_path = build_path(args.file)
+    path_check(abs_path)
     output_cmd += (' --file=' + abs_path)
 
 if args.export_pdf:
@@ -70,5 +60,8 @@ if args.export_pdf:
 if args.export_latex:
     output_cmd += ' --export-latex'
 
-print(output_cmd)
+print('Running a Inkscape wrapper')
+
+# Execute command
+p = subprocess.Popen(output_cmd, shell=True)
 
