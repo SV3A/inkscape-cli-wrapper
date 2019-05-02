@@ -1,13 +1,36 @@
 #!/usr/bin/env python3
 
 # TODO:
-# 1. Check the path where the program is run from
-# 2. Find out how to execute command
+# 1. Find out how to execute command
 
+import os
+import re
 import sys
 import argparse
 from pathlib import Path
-import re
+
+# Check if given path exists
+def path_check(path):
+    if os.path.exists(path):
+        return path
+    else:
+        raise NameError('Path not found')
+
+# Build absolute path
+def build_path(path_input):
+    # Strip path string from '.', '/' or './'
+    path_strip = re.search('\w.*', path_input)
+
+    if not path_strip:
+        raise NameError('Invalid file')
+    else:
+        local_path = path_strip.group(0)
+
+    # Build absolute path and check if it exists
+    abs_path = os.getcwd() + '/' + local_path
+    path_check(abs_path)
+
+    return abs_path
 
 parser = argparse.ArgumentParser()
 
@@ -34,17 +57,18 @@ if args.z:
 if args.D:
     output_cmd += ' -D'
 
+# Handle file input
 if args.file:
-    print(args.file)
-    m = re.search(r'(?<=\/).*|\w*|(?<=\.).*', args.file)
+    abs_path = build_path(args.file)
+    output_cmd += (' --file=' + abs_path)
 
-    print(m.group(0))
+if args.export_pdf:
+    abs_path = build_path(args.export_pdf)
+    output_cmd += (' --export-pdf=' + abs_path)
 
-    output_cmd += (' --file=' + home + '/' + args.file)
-
+# Check for flag
 if args.export_latex:
     output_cmd += ' --export-latex'
 
-# print(output_cmd)
-# print(home)
+print(output_cmd)
 
