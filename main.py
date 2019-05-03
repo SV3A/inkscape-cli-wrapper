@@ -5,8 +5,6 @@ import datetime
 import argparse
 import subprocess
 
-debug = True
-
 # Check if given path exists
 def path_check(path):
     if os.path.exists(path):
@@ -67,19 +65,6 @@ for arg in args.__dict__:
 
         # Add command
         output_cmd += (' --' + arg.replace("_", "-") + '=' + abs_path)
-
-# Write debug
-if debug == True:
-    # Place log file in the dir where the script is located
-    script_path = os.path.abspath(os.path.dirname(__file__))
-    log_file_path = script_path + '/inkwrap.log'
-    if os.path.exists(log_file_path):
-        f = open(log_file_path, "a")
-    else:
-        f = open(log_file_path, "w")
-
-    f.write(str(datetime.datetime.now()) + '\t' + output_cmd + '\n\n')
-    f.close()
 
 # Execute command
 p = subprocess.Popen(output_cmd, shell=True)
