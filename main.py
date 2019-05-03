@@ -52,8 +52,12 @@ for flag in unknown_args:
 # Handle args with file input
 for arg in args.__dict__:
     if args.__dict__[arg] is not None:
-        # Build path
-        abs_path = build_path(args.__dict__[arg])
+
+        # If relative build absolute path
+        if os.path.isabs(args.__dict__[arg]):
+            abs_path = args.__dict__[arg]
+        else:
+            abs_path = build_path(args.__dict__[arg])
 
         # Existing paths are checked
         if arg == 'file':
