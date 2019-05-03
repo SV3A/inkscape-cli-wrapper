@@ -5,6 +5,8 @@ import datetime
 import argparse
 import subprocess
 
+debug = True
+
 # Check if given path exists
 def path_check(path):
     if os.path.exists(path):
@@ -51,30 +53,33 @@ for flag in unknown_args:
 
 # Handle args with file input
 for arg in args.__dict__:
-    if args.__dict__[arg] is not None:
-
+    path = args.__dict__[arg]
+    if path is not None:
         # If relative build absolute path
-        if os.path.isabs(args.__dict__[arg]):
-            abs_path = args.__dict__[arg]
+        if os.path.isabs(path):
+            abs_path = path
         else:
-            abs_path = build_path(args.__dict__[arg])
+            abs_path = build_path(path)
 
         # Existing paths are checked
         if arg == 'file':
             path_check(abs_path)
 
         # Add command
-        output_cmd += (' --' + arg + '=' + abs_path)
+        output_cmd += (' --' + arg.replace("_", "-") + '=' + abs_path)
 
 # Write debug
-log_file_path = '/Users/svea/Projects/ink-wrapper/inkwrap.log'
-if os.path.exists(log_file_path):
-    f = open(log_file_path, "a")
-else:
-    f = open(log_file_path, "w")
+if debug == True:
+    # Place log file in the dir where the script is located
+    script_path = os.path.abspath(os.path.dirname(__file__))
+    log_file_path = script_path + '/inkwrap.log'
+    if os.path.exists(log_file_path):
+        f = open(log_file_path, "a")
+    else:
+        f = open(log_file_path, "w")
 
-f.write(str(datetime.datetime.now()) + '\t' + output_cmd + '\n\n')
-f.close()
+    f.write(str(datetime.datetime.now()) + '\t' + output_cmd + '\n\n')
+    f.close()
 
 # Execute command
 p = subprocess.Popen(output_cmd, shell=True)
