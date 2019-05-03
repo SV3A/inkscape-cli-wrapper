@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
-import sys
+import datetime
 import argparse
 import subprocess
 
@@ -61,6 +61,16 @@ if args.export_latex:
     output_cmd += ' --export-latex'
 
 print('Running a Inkscape wrapper')
+
+# Write debug
+log_file_path = '/Users/svea/Projects/ink-wrapper/inkwrap.log'
+if os.path.exists(log_file_path):
+    f = open(log_file_path, "a")
+else:
+    f = open(log_file_path, "w")
+
+f.write(str(datetime.datetime.now()) + '\t' + output_cmd + '\n\n')
+f.close()
 
 # Execute command
 p = subprocess.Popen(output_cmd, shell=True)
