@@ -25,42 +25,42 @@ def build_path(path_input):
     # Build absolute path
     return os.getcwd() + '/' + local_path
 
-parser = argparse.ArgumentParser()
-
-# Add commandline options
-parser.add_argument("-z", action="store_true")
-parser.add_argument("-D", action="store_true")
-parser.add_argument("--file")
-parser.add_argument("--export-pdf")
-parser.add_argument("--export-latex", action="store_true")
-
-args = parser.parse_args()
-
 # String to be parsed as inkscape command
 output_cmd = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 
-# Check for flags
-if args.z:
-    output_cmd += ' -z'
+parser = argparse.ArgumentParser(description=\
+        'Absolute path wrapper for Inkscape.')
 
-if args.D:
-    output_cmd += ' -D'
+# Add commandline options that require file
+parser.add_argument('--file', '-f')
+parser.add_argument('--print', '-p')
+parser.add_argument('--export-png', '-e')
+parser.add_argument('--export-plain-svg', '-l')
+parser.add_argument('--export-ps', '-P')
+parser.add_argument('--export-eps', '-E')
+parser.add_argument('--export-pdf', '-A')
+parser.add_argument('--export-emf', '-M')
+parser.add_argument('--export-wmf', '-m')
 
-# Handle file input
-if args.file:
-    abs_path = build_path(args.file)
-    path_check(abs_path)
-    output_cmd += (' --file=' + abs_path)
+# Parse given args
+args, unknown_args = parser.parse_known_args()
 
-if args.export_pdf:
-    abs_path = build_path(args.export_pdf)
-    output_cmd += (' --export-pdf=' + abs_path)
+# Add flags
+for flag in unknown_args:
+    output_cmd += ' ' + flag
 
-# Check for flag
-if args.export_latex:
-    output_cmd += ' --export-latex'
+# Handle args with file input
+for arg in args.__dict__:
+    if args.__dict__[arg] is not None:
+        # Build path
+        abs_path = build_path(args.__dict__[arg])
 
-print('Running a Inkscape wrapper')
+        # Existing paths are checked
+        if arg == 'file':
+            path_check(abs_path)
+
+        # Add command
+        output_cmd += (' --' + arg + '=' + abs_path)
 
 # Write debug
 log_file_path = '/Users/svea/Projects/ink-wrapper/inkwrap.log'
