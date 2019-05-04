@@ -69,4 +69,4 @@ for arg in args.__dict__:
         output_cmd += (' --' + arg.replace("_", "-") + '=' + abs_path)
 
 # Execute command
-p = subprocess.Popen(output_cmd, shell=True)
+p = subprocess.call(output_cmd, shell=True)
