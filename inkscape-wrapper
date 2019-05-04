@@ -4,17 +4,19 @@ import re
 import argparse
 import subprocess
 
-# Check if given path exists
+
 def path_check(path):
+    # Check if given path exists
     if os.path.exists(path):
         return path
     else:
         raise NameError('Path not found')
 
-# Build absolute path
+
 def build_path(path_input):
+    # Build absolute path
     # Strip path string from '.', '/' or './'
-    path_strip = re.search('\w.*', path_input)
+    path_strip = re.search(r'\w.*', path_input)
 
     if not path_strip:
         raise NameError('Invalid file')
@@ -24,11 +26,12 @@ def build_path(path_input):
     # Build absolute path
     return os.getcwd() + '/' + local_path
 
+
 # String to be parsed as inkscape command
 output_cmd = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 
-parser = argparse.ArgumentParser(description=\
-        'Absolute path wrapper for Inkscape.')
+parser = argparse.ArgumentParser(
+    description='Absolute path wrapper for Inkscape.')
 
 # Add commandline options that require file
 parser.add_argument('--file', '-f')
@@ -67,4 +70,3 @@ for arg in args.__dict__:
 
 # Execute command
 p = subprocess.Popen(output_cmd, shell=True)
-
